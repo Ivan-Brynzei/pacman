@@ -1,5 +1,6 @@
 import pygame
 import sys
+import argparse
 from src.settings import WIDTH, HEIGHT, MARGIN_BOTTOM
 from src.game import Game
 
@@ -8,6 +9,13 @@ pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT + MARGIN_BOTTOM))
 pygame.display.set_caption('Pacman')
 
+COLORS = {
+    'black': (0, 0, 0),
+    'white': (255, 255, 255),
+    'red': (255, 0, 0),
+    'green': (0, 255, 0),
+    'blue': (0, 0, 255)
+}
 
 class Main:
     def __init__(self, screen, background_color, walls_color):
@@ -47,7 +55,19 @@ class Main:
             pygame.display.update()
             self.FPS.tick(30)
 
-if __name__ == '__main__':
+def parse_arguments():
+    parser = argparse.ArgumentParser(description='Pacman Game with customizable colors')
+    parser.add_argument('--background', type=str, choices=COLORS.keys(), default='black',
+                        help='Set the initial background color (default: black)')
+    parser.add_argument('--walls', type=str, choices=COLORS.keys(), default='white',
+                        help='Set the initial walls color (default: white)')
+    return parser.parse_args()
 
-    play = Main(screen)
+if __name__ == '__main__':
+    args = parse_arguments()
+    
+    background_color = COLORS[args.background]
+    walls_color = COLORS[args.walls]
+    
+    play = Main(screen, background_color, walls_color)
     play.start()
