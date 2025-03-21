@@ -87,6 +87,16 @@ class Game:
 
     def close_menu(self):
         self.is_menu_open = False
+
+    def change_background_color(self):
+        self.current_background_color_index = (self.current_background_color_index + 1) % len(self.background_colors)
+        self.background_color = self.background_colors[self.current_background_color_index]
+        
+    def change_walls_color(self):
+        self.current_walls_color_index = (self.current_walls_color_index + 1) % len(self.walls_colors)
+        self.walls_color = self.walls_colors[self.current_walls_color_index]
+        for wall in self.walls:
+            wall.update_color(self.walls_color)
         
     def draw(self):
         self.screen.fill(self.background_color)
