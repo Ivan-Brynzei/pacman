@@ -3,6 +3,7 @@ import random
 
 from src.settings import GHOST_SPEED, WIDTH
 
+
 class Ghost(pygame.sprite.Sprite):
     def __init__(self, row, col, size, ghost_name, level):
         super().__init__()
@@ -12,15 +13,15 @@ class Ghost(pygame.sprite.Sprite):
         self.y = col * self.size
         self.ghost_name = ghost_name
         self.speed = GHOST_SPEED
-        
+
         self.move_dir = 'up'
         self.img_path = f'assets/{self.ghost_name}/{self.move_dir}.png'
-        
+
         self.image = pygame.image.load(self.img_path)
         self.image = pygame.transform.scale(self.image, (self.size, self.size))
-        
+
         self.rect = self.image.get_rect(topleft=(self.x, self.y))
-        
+
         self.keys = ['left', 'right', 'up', 'down']
         self.directions = {
             'left': (-self.speed, 0),
@@ -29,38 +30,39 @@ class Ghost(pygame.sprite.Sprite):
             'down': (0, self.speed),
         }
         self.direction = (0, 0)
-        
+
     def move_to_start(self):
         self.rect.x = self.x
         self.rect.y = self.y
-        
+
     def is_collide(self, x, y, walls_collide_list):
         rect = self.rect.move(x, y)
-        
         if rect.collidelist(walls_collide_list) == -1:
             return False
         return True
-        
-        
+
     def animate(self, power_mode):
         if power_mode:
-            self.img_path = f'assets/edible/ghost.png'
+            self.img_path = 'assets/edible/ghost.png'
         else:
             self.img_path = f'assets/{self.ghost_name}/{self.move_dir}.png'
-            
+
         self.image = pygame.image.load(self.img_path)
         self.image = pygame.transform.scale(self.image, (self.size, self.size))
         self.rect = self.image.get_rect(topleft=(self.rect.x, self.rect.y))
-          
+
     def update(self, walls_collide_list, power_mode):
         available_moves = []
-        
+
         for key in self.keys:
             if not self.is_collide(*self.directions[key], walls_collide_list):
                 available_moves.append(key)
-        
-        is_random = False if len(available_moves) <= 2 and self.direction != (0, 0) else True
-        
+
+        if len(available_moves) <= 2 and self.direction != (0, 0):
+            is_random = False
+        else:
+            is_random = True
+
         if is_random and random.randrange(0, 100) <= 30 + (self.level * 3):
             self.move_dir = random.choice(available_moves)
             self.direction = self.directions[self.move_dir]
@@ -69,13 +71,8 @@ class Ghost(pygame.sprite.Sprite):
             self.rect.move_ip(self.direction)
         else:
             self.direction = (0, 0)
-    
         if self.rect.right <= 0:
             self.rect.x = WIDTH
         elif self.rect.left >= WIDTH:
             self.rect.x = 0
-        
         self.animate(power_mode)
-        
-        
-        
